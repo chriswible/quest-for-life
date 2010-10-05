@@ -1,0 +1,193 @@
+:javascript
+  var chart;
+  Highcharts.visualize = function(table, options) {
+    // total plot areas
+    plots = 0
+    you = false
+    options.xAxis.plotLines = []
+    // the categories
+    options.xAxis.categories = [];
+    $('tbody th', table).each( function(i) {
+      options.xAxis.categories.push(this.innerHTML);
+    });
+    // the data series
+    options.series = [];
+    $('tr', table).each( function(i) {
+      var tr = this;
+      plots++
+      $('th, td', tr).each( function(j) {
+        if (j > 0) { // skip first column
+          if (i == 0) { // get the name and init the series
+            options.series[j - 1] = { 
+              name: this.innerHTML,
+              data: []
+            };
+          } else { // add values
+            options.series[j - 1].data.push(parseFloat(this.innerHTML));
+          }
+        }else{
+          if($(this).hasClass('you')) {
+            options.xAxis.plotLines.push({
+                color: '#FF9900',
+                width: 2,
+                value: i
+            })
+            you = true
+          }
+        }
+      });
+    });
+    $('#data-averages tbody tr td span').each( function(k) {
+      options.xAxis.plotLines.push({
+          color: '#FF0000',
+          width: 2,
+          value: ($.trim(this.innerHTML) / plots) + (plots/2)
+      })
+    });
+    chart = new Highcharts.Chart(options);
+  }
+
+  // On document ready, call visualize on the datatable.
+  $(document).ready(buildChart = function() {
+    if(chart) {
+      chart.destroy();
+    }
+    makeScrollable('div#chart-results', 'div#all');
+    var table = document.getElementById('data-all'),
+    options = {
+      colors: [
+        "#DDDF0D",
+        "#7798BF",
+        "#55BF3B",
+        "#DF5353",
+        "#aaeeee",
+        "#ff0066",
+        "#eeaaee",
+        "#55BF3B",
+        "#DF5353",
+        "#7798BF",
+        "#aaeeee"
+      ],    
+      chart: {
+        backgroundColor: {
+          linearGradient: [0, 0, 0, 400],
+          stops: [
+            [0, 'rgb(7, 8, 17)'],
+            [1, 'rgb(72, 81, 166)']
+          ]
+        },
+        events: {
+          load: function(event) {
+            $('#external-caption').empty().html($('.highcharts-title'));
+            $('#external-legend').empty().html($('.highcharts-legend'));
+            if(you) {
+              $("#external-legend ul").append('<li style="margin-left:-18px"><span style="color:#ff9900;text-align: center;margin-right: 8px">&mdash;</span>Your estimate</li>');
+            }
+            if($("#data-averages").length > 0) {
+              $("#external-legend ul").append('<li style="margin-left:-18px"><span style="color:#ff0000;text-align: center;margin-right: 8px">&mdash;</span>Average for all participants</li>');
+            }
+          }
+        },
+        margin: [ 50, 50, 50, 50],
+        borderWidth: 0,
+        borderRadius: 15,
+        plotBackgroundColor: null,
+        plotShadow: true,
+        plotBorderWidth: 0,
+        renderTo: 'all',
+        defaultSeriesType: 'bar'
+      },
+      title: {
+        text: table.getElementsByTagName('caption')[0].innerHTML,
+        align: 'left',
+        style: {
+          margin: [0,0,0,50],
+          textAlign: 'center',
+          color: '#FFF',
+          font: '16px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+        }
+      },
+      xAxis: {
+        gridLineWidth: 1,
+        gridLineColor: 'rgba(255, 255, 255, .1)',
+        lineColor: '#0F1124',
+        tickColor: '#999',
+        labels: {
+          align: 'center',
+          rotation: -90,
+          style: {
+            color: '#fff',
+            fontWeight: 'bold'
+          }
+        },
+        title: {
+          style: {
+            color: '#AAA',
+            font: 'bold 12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+          }
+        }
+      },
+      yAxis: {
+        alternateGridColor: false,
+        minorTickInterval: null,
+        gridLineColor: 'rgba(255, 255, 255, .1)',
+        lineWidth: 0,
+        tickWidth: 0,
+        labels: {
+          style: {
+            color: '#fff',
+            fontWeight: 'bold'
+          }
+        },
+        title: {
+          text: 'Total Responses',
+          style: {
+            color: '#AAA',
+            font: 'bold 12px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+          }
+        }
+      },
+      legend: {
+        layout: 'vertical',
+        align: 'right',
+        style: {
+          top: '0',
+          left: '0',
+          margin: '0',
+          height: '0'
+        },
+        labelFormatter: function(){
+          return this.name + ' (Hide)'
+        }
+      },
+      tooltip: {
+        backgroundColor: {
+          linearGradient: [0, 0, 0, 50],
+          stops: [
+            [0, 'rgba(0, 0, 35, .8)'],
+            [1, 'rgba(0, 8, 100, .5)']
+          ]
+        },
+        borderWidth: 0,
+        style: {
+          color: '#FFF',
+        },
+        formatter: function() {
+          name =  this.series.name.replace(/^\s+|\s+$/g, ''); // trim whitespace
+          tipText = '<div style="margin-left:10px;text-align: center">' +
+            '<strong>' +
+            this.y +
+            ' <em>' +
+            (this.y > 1 ? name : name.slice(0,-1)) + // if singluar, pop the s
+            '</em></strong><br />responded with ' +
+            this.x.toLowerCase() +
+            '</div>';
+          return tipText
+        }
+      },
+      credits: {
+        enabled: false
+      }
+    };
+    Highcharts.visualize(table, options);
+  });

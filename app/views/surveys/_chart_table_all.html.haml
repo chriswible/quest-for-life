@@ -1,0 +1,47 @@
+%div#all.chart_results
+  - if !@current_object.nil? && !@current_object.survey_group_id
+    %table#data-all.chart_data{ :summary => "This table displays the estimates for the #{Survey.title_for_parameter(@parameter)} component of the Drake Equation for #{@gender}s, age group #{@age_group.description} that have participated in this experiment"}
+      %caption= "Estimates for #{@gender}s, age group #{@age_group.description}"
+      %thead
+        %tr
+          %th{ :scope => 'col' }
+            = Survey.title_for_parameter(@parameter)
+          %th{ :scope => 'col' }
+            = "#{@gender}s"
+          %th{ :scope => 'col' }
+            = "#{@age_group.description} year-olds"
+          %th{ :scope => 'col' }
+            = "#{@age_group.description} year-old #{@gender}s"
+      %tbody
+        - Survey.options_for("#{@parameter}").each do |option|
+          %tr{ :class => @current_object ? @current_object.class_for_results(@parameter, option) : '', :title => @current_object ? @current_object.class_for_results(@parameter, option) : ''}
+            %th{ :class => @current_object ? @current_object.class_for_results(@parameter, option) : '', :scope => 'row' }
+              = @parameter != 'n' ? option.chart_label(@parameter) : "#{number_with_delimiter(option[0])} - #{number_with_delimiter(option[1])}"
+            %td
+              = @current_object.total_by_gender(@gender,@parameter,option)
+            %td
+              = @current_object.total_by_age(@age_group,@parameter,option)
+            %td
+              = @current_object.total_combined(@age_group,@gender,@parameter,option)
+  - else
+    %table#data-all.chart_data{ :summary => "This table displays the estimates for the #{Survey.title_for_parameter(@parameter)} component of the Drake Equation for #{@current_object.survey_group.group_name} that have participated in this experiment"}
+      %caption= "Estimates for #{@current_object.survey_group.group_name}"
+      %thead
+        %tr
+          %th{ :scope => 'col' }
+            = Survey.title_for_parameter(@parameter)
+          %th{ :scope => 'col' }
+            Males
+          %th{ :scope => 'col' }
+            Females
+      %tbody
+        - Survey.options_for("#{@parameter}").each do |option|
+          %tr
+            %th{ :class => @current_object ? @current_object.class_for_results(@parameter, option) : '', :scope => 'row' }
+              = @parameter != 'n' ? option.chart_label(@parameter) : "#{number_with_delimiter(option[0])} - #{number_with_delimiter(option[1])}"
+            %td
+              = @current_object.total_by_gender('Male',@parameter,option)
+            %td
+              = @current_object.total_by_gender('Female',@parameter,option)
+- if !@current_object.nil? && !@current_object.survey_group_id
+  = partial 'chart_table_averages'

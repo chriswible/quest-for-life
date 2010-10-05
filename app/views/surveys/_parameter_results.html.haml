@@ -1,0 +1,22 @@
+-# 
+  Copyright (c) 2009 Steven Hammond, Cris Necochea, Joe Lind, Jeremy Weiskotten
+  
+  This work is licensed under the Creative Commons Attribution 3.0 United States License.
+  To view a copy of  this license, visit http://creativecommons.org/licenses/by/3.0/us/ or
+  send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
+%div.tab-body
+  %div#results-wrapper
+    %div#external-legend{ :style => 'position:relative' }
+    %h2= Survey.title_for_parameter(@parameter)
+    %h3{ :style => 'width:auto' }= Survey.question_for_parameter(@parameter)
+    - if !@current_object.nil? && !@current_object.survey_group
+      - semantic_form_for @current_object, :url => request.request_uri.gsub("&display=page", "") do |form|
+        - form.inputs do
+          = form.input :age_group, :label => 'Show age:', :as => :select, :include_blank => false, :label_method => :description, :label => 'Show age:', :selected => @age_group.id
+          = form.input :gender, :as => :select, :label => 'Show gender:', :collection => ['Male','Female'], :include_blank => false, :selected => @gender
+        - form.buttons do
+          = form.commit_button 'Update Results'    
+    %div#external-caption{ :style => 'clear:both'}
+    %div#chart-results
+      = partial 'chart_table_all'
+      = partial 'chart_javascript'

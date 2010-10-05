@@ -1,0 +1,16 @@
+%div#averages.chart_results
+  %table#data-averages.chart_data{ :summary => "This table displays the average estimate for the #{Survey.title_for_parameter(@parameter)} component of the Drake Equation for all participants in this experiment"}
+    %caption= "Average for all participants"
+    %thead
+      %tr
+        %th{ :scope => 'col' }
+          Total Paticipants
+        %th{ :scope => 'col' }
+          Average Estimate
+    %tbody
+      %tr
+        %td
+          = Survey.n_not_null.count()
+        %td
+          = @current_object.param_average_human(@parameter)
+          %span{ :style => 'display:none'}= @current_object.param_average_data(@parameter)
