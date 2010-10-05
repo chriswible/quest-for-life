@@ -1,3 +1,29 @@
-
 Crowdsourcing the Drake Equation
 
+##################################
+
+This project was a lot of fun. 
+I'm officially HAML, SASS, and git convert after working on this.
+
+According to the instructions, the charts reflect actual data in the database. 
+The user can view charts by two demographic parameters (age and gender). 
+This works for all parameters, via ajax - or without javascript in an accessible table.
+Plot lines are added to the chart to represent the average response for
+the current parameter, as well as the current user's estimate if they've
+completed the survey.
+
+I completely rewrote the surveys controller to no longer use make_resourceful,
+which I found was a pretty nifty tool in itself. I maintained the @current_object
+and @current_objects names to adhere to the rest of the view's expecations.
+
+Current code passes all existing tests with the exception of the fact that
+I changed the survey_controller's index test as index functions differently now.
+
+Also worth noting, the entire site has been tweaked to be accessible without
+javascript. All forms and buttons, and selects degrade gracefully.
+
+I honestly would have loved to continue with this project, I have a lot of things
+I'd like to do - it was a lot of fun.
+
+Chris Wible
+chriswiblejr@gmail.com
