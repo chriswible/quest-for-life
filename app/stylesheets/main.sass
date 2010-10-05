@@ -332,13 +332,24 @@ blockquote.signage
           margin-bottom: .3em
         +rounded_button("/images/twitter_gradient.png", "#9ae4e8", "320px", "140%", "#4f8a9e", "6px 6px", "2px 2px 8px #000", "#0084B4")
   
-    #participate, #teachers
+    #participate, #teachers, #current-average
       padding: .5em 1em
       +border_radius(1em)
-      min-height: 240px
       background-color: #242853
       background: rgba(0,0,0,.4)
-    
+      min-height: 240px
+    #current-average
+      height: 138px
+      min-height: 130px
+      width: 190px
+      float: right
+      p.estimate
+        font-size: 2.5em
+        color: #3ac1ff
+        margin: 0
+        padding: 0
+        text-align: center
+        line-height: 2
     #password_form,
     #participate
       float: left
@@ -645,3 +656,109 @@ ul.n-results
   text-align: center
 .right
   text-align: right
+  
+div.tab-body
+  form
+    text-align: center
+    line-height: 25px
+    padding-bottom: 10px
+  li, fieldset
+    display: inline
+    padding: 0 5px
+    label
+      display: inline
+      margin-right: 10px
+    select
+      display: inline
+  #chart-results
+    li
+      display: block
+body.js
+  #content #main
+    #new_survey input
+      display: none
+  div#chart-results
+    height: 400px
+    overflow: hidden
+    margin: auto
+    width: 650px
+    background-image: url(/images/chart_directionals.png)
+    background-position: center
+    background-repeat: no-repeat
+    margin-top: 20px
+  div.chart_results
+    width: 600px
+    height: 1500px
+    margin: auto
+  table.chart_data
+    display: none
+  div#results-wrapper fieldset.buttons
+    display: none
+  div#external-legend
+    width: 275px
+    height: 100px
+    overflow: hidden
+    float: right
+    ul
+      padding-left: 10px
+      li
+        display: block
+        margin: 0
+        padding: 0
+        font-size: 12px
+        padding-left: 20px
+body.nojs
+  #content #main
+    #new_survey
+      position: relative
+      input
+        position: absolute
+        top: 85px
+        left: 200px
+    p.start-survey-prompt a
+      height: 115px
+      strong
+        display: none
+    #form
+      fieldset
+        text-align: center
+        float: none
+        display: block
+        ol
+          margin: 0
+          padding: 0
+          float: left
+          li
+            text-align: left
+          select
+            display: inline
+    .tab-body #new_survey input
+      position: relative
+      top: auto
+      left: auto
+  table#data-averages tbody tr td
+    border-left: 1px solid #13152D
+  table.chart_data
+    width: 650px
+    margin: 20px auto
+    caption
+      padding: 5px
+      font-size: 1.25em
+    tbody
+      tr 
+        th
+          text-align: center
+          border-bottom: 1px solid #232752
+          border-right: 4px solid #3B4288
+          text-align: center
+          margin-right: 1em
+          background-color: #0E1021
+        td
+          border-right: 1px solid #13152D
+          text-align: center
+          border-bottom: 1px solid #0F1122
+      tr.you 
+        th
+          background-color: #5C992E
+        td
+          background-color: #9FC950

@@ -7,9 +7,9 @@
   
 - title 'About You', 'Almost there&hellip;'
 
-- if current_object.survey_group
+- if @current_object.survey_group
   %p
-    We use basic information about you to learn how different people feel about the Drake Equation. Your teacher has already told us where you live (#{current_object.address}) and how hold you are (#{current_object.age_group.description}). Please tell us your gender so you can see if gender makes a difference in your class results.
+    We use basic information about you to learn how different people feel about the Drake Equation. Your teacher has already told us where you live (#{@current_object.address}) and how hold you are (#{@current_object.age_group.description}). Please tell us your gender so you can see if gender makes a difference in your class results.
 - else
   %p 
     In addition to teaching a little science, we hope to learn more about how different people around the world think about this issue. Please tell us a little about yourself so that we can compare your responses with others.
@@ -18,10 +18,10 @@
     %em This is optional. Entering your Twitter username will allow us to associate that name and your Twitter avatar with your answer.
   
 #form  
-  - semantic_form_for current_object do |form|
+  - semantic_form_for @current_object do |form|
     = hidden_field_tag :demographics, 'true'
     - form.inputs do
-      - unless current_object.survey_group     
+      - unless @current_object.survey_group     
         = form.input :city
         = form.input :state, :label => 'State/Province'
         = form.input :country, :as => :country, :include_blank => true
@@ -29,7 +29,7 @@
       = form.input :gender, :as => :select, :collection => ['Male', 'Female'], :include_blank => true
       = form.input :activity_id, :label => 'Favorite Activity', :as => :select, :include_blank => true, :label_method => :name
       = form.input :lit_type_id, :label => 'Favorite Kind of Book', :as => :select, :include_blank => true, :label_method => :name
-      - unless current_object.survey_group
+      - unless @current_object.survey_group
         = form.input :twitter_username
     - form.buttons do
       = form.commit_button 'Finish'

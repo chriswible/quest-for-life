@@ -14,7 +14,7 @@
       = link_to "Log out", '/logout'
   - title "My Classes"
 - else
-  - title "#{current_object.username}'s CLasses"
+  - title "#{current_object.username}'s Classes"
 
 %br
   
@@ -73,10 +73,10 @@
           %td= g.surveys.n_null.count
           %td= (g.num_students - g.surveys.n_not_null.count - g.surveys.n_null.count)
           - if current_user != current_object
-            %td
+            %td.centered
               - semantic_form_for [g, Survey.new].compact do |form|
                 - form.buttons do
-                  = form.commit_button 'Start the Drake Equation'            
+                  = form.commit_button 'Start the Drake Equation'      
           -else
             %td.right
               = link_to 'summary', [g, :surveys]

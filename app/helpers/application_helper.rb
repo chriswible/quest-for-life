@@ -38,9 +38,8 @@ module ApplicationHelper
   end
   
   def drake_link(text, url, definition)
-    class_name = (@parameter == url) ? 'yah drake' : 'drake'
+    class_name = ((@parameter == url) ? 'yah drake ' : 'drake ') + url;
     survey = Survey.find_by_id(session[:survey_id]) if session[:survey_id].present?
-
     if survey
       path = survey_parameter_path(survey, url)
     else
@@ -118,6 +117,6 @@ module ApplicationHelper
   end
 
   def make_survey_prompt
-    partial 'shared/survey_prompt' unless current_object.present?
+    partial 'shared/survey_prompt' unless @current_object.present?
   end 
 end

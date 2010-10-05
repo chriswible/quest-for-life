@@ -22,87 +22,133 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 class SurveysController < ApplicationController
-  before_filter :find_parameter, :only => :edit
+  before_filter :current_object, :except => :index
+  before_filter :current_objects, :only => :index
+  before_filter :find_parameter, :only => [:index,:edit]
   before_filter :only_show_if_completed, :only => :show
   before_filter :authorize, :only => [:edit, :update]
   
-  make_resourceful do
-    actions :new, :create, :show, :index, :edit, :update
-    belongs_to :survey_group
-
-    before :index, :show do
-      @parameter = 'n' 
-    end
-
-    before :edit do
-      if @parameter == 'n'
-        redirect_to :action => :show, :id => params[:id]
+  def index
+    @options = Survey.options_for("#{@parameter}")
+    if(session[:survey_id].present?)
+      @current_object = Survey.find_by_id(session[:survey_id]) || Survey.new
+    else
+      if(params[:survey_group_id].present?)
+        @current_object = Survey.new
+        @current_object.survey_group_id = params[:survey_group_id]
+      else
+        @current_object = Survey.new
       end
     end
     
-    before :update do
-      logger.warn params[:activity_id]
-    end
-    
-    after :create do
-      # store survey id in the user's session, which authorizes them to edit/update
-      session[:survey_id] = current_object.id
-    end
+    @gender = @current_object.gender.nil? ? 'Male' : @current_object.gender
+    @age_group = @current_object.gender.nil? ? AgeGroup.find(1) : AgeGroup.find(@current_object.age_group_id)
 
-    response_for :create do |format|
-      format.html do
-        redirect_to edit_survey_path(current_object)
+    if params[:survey] 
+      if params[:survey][:age_group_id]
+        @age_group = AgeGroup.find(params[:survey][:age_group_id])
       end
-    end
-    response_for :update do |format|
-      format.html do
-        if params[:demographics].present?
-          # just asked for demographic data, show results
-          redirect_to(current_object)
-        else        
-          n = next_parameter
-          if n
-            redirect_to survey_parameter_path(current_object, n)
-          else
-            # no more parameters... need to ask for demographic data
-            redirect_to survey_demographics_path(current_object)
-          end
+      if params[:survey][:gender]
+        @gender = params[:survey][:gender]
+      end
+    else
+      if session[:survey_id]
+        if session[:survey_id][:gender] != 0
+          @gender = session[:survey_id][:gender]
         end
+        if session[:survey_id][:gender] != 0
+          @gender = session[:survey_id][:gender]
+        end
+      end
+    end    
+    if request.xhr?
+      if params[:display] != 'page'
+        render :partial => "chart_table_all"
+      else
+        render :partial => "parameter_results"
+      end
+    end
+  end
+  
+  def show
+    @parameter = 'n' 
+  end
+
+  def new
+    @current_object = Survey.new()
+  end
+  
+  def create
+    @current_object = Survey.create(params[:post])
+    session[:survey_id] = current_object.id
+    if params[:survey_group_id]
+      @current_object.survey_group_id = params[:survey_group_id]
+      @current_object.save
+    end
+    redirect_to edit_survey_path(@current_object)
+  end
+  
+  def edit
+    if @parameter == 'n'
+      redirect_to :action => :show, :id => params[:id]
+    end
+  end
+  
+  def update
+    logger.warn params[:activity_id]
+    current_object.update_attributes(params[:survey])
+    if params[:demographics].present?
+      # just asked for demographic data, show results
+      redirect_to(current_object)
+    else
+      n = next_parameter
+      if n
+        redirect_to survey_parameter_path(current_object, n)
+      else
+        # no more parameters... need to ask for demographic data
+        redirect_to survey_demographics_path(current_object)
       end
     end
   end
 
   def current_objects
-    @current_objects ||= current_model.n_not_null #.paginate(:per_page => 20, :page => params[:page])
+    if params[:survey_group_id]
+      @current_objects ||= Survey.find_all_by_survey_group_id(params[:survey_group_id], :conditions => "n is not null")
+    else
+      @current_objects ||= Survey.n_not_null
+    end   
   end
   
+  
   def current_object
-    @current_object ||= current_model.find_by_slug(params[:id]) if params[:id].present?
+    @current_object ||= Survey.find_by_slug(params[:id]) if params[:id].present?
     return @current_object
   end
 
   private
+
+  
   def next_parameter
     current = params[:survey].keys.map{|k| k.sub(/_rational_id$/, '')}.find{|k| Survey.parameter_columns.include? k.to_sym }
     Survey.next_parameter(current)
   end
+  
   def find_parameter
-    @parameter = params[:parameter] || Survey.parameter_columns.first.to_s
+    @parameter = params[:p] ? params[:p] : params[:parameter] || Survey.parameter_columns.first.to_s
   end
   
   def authorize
     return if current_object.nil?
-    
-    unless current_object.id == session[:survey_id]
+    unless @current_object.id == session[:survey_id]
       if current_object.completed?
-        redirect_to [parent_object, current_object].flatten # show survey
+        redirect_to [@current_object.survey_group, @current_object].flatten # show survey
       else
-        redirect_to parent? ? survey_group_surveys_path : surveys_path
+        redirect_to !@current_object.survey_group.nil? ? survey_group_surveys_path : surveys_path
       end
     end
   end
   
   def only_show_if_completed
-    redirect_to ( parent? ? survey_group_surveys_path : surveys_path) if current_object.nil? || !current_object.completed?
+    redirect_to surveys_path if @current_object.nil? || !@current_object.completed?
   end
 end

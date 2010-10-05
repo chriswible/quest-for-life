@@ -10,7 +10,7 @@
     = Survey.question_for_parameter(parameter)
     %em Your estimate:
   
-  - semantic_form_for current_object do |form|
+  - semantic_form_for @current_object do |form|
     - form.inputs(:class => 'parameter') do
       = parameter_input form, parameter
     - form.buttons do

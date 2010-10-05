@@ -67,8 +67,8 @@ class SurveysControllerTest < ActionController::TestCase
     # Survey.delete_all
     # surveys = [Factory(:survey), Factory(:survey)]
     get :index
-
-    assert_response :ok
+    
+    assert_not_nil assigns(:current_object)
     # assert_same_elements surveys, assigns(:surveys)
   end
 end

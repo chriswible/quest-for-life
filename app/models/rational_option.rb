@@ -49,6 +49,18 @@ class RationalOption < ActiveRecord::Base
       number_with_delimiter(self.numerator)
     end
   end
+  
+  def chart_label(param)   
+    if param == 'ne'
+      if quotient >= 1
+        quotient.to_i
+      else
+        "#{number_with_delimiter(self.numerator)} in #{number_with_delimiter(self.denominator)}"
+      end
+    else
+      quotient_label
+    end
+  end
 
   def r_star_label
     "#{pluralize quotient.to_i, 'star'} #{quotient==1 ? 'forms' : 'form'} in our galaxy each year"
@@ -97,6 +109,7 @@ class RationalOption < ActiveRecord::Base
   def l_label
     "on average, an advanced society survives #{pluralize number_with_delimiter(quotient.to_i), 'year'}"
   end
+
   private
   
   def calculate_quotient

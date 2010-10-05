@@ -5,34 +5,32 @@
   To view a copy of  this license, visit http://creativecommons.org/licenses/by/3.0/us/ or
   send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
   
-- title "Your results: N = #{number_with_delimiter current_object.n}"
+- title "Your results: N = #{number_with_delimiter @current_object.n}"
 %ul.n-results
   %li
     %dl
       %dt
         = drake_number
       %dd
-        = number_with_delimiter current_object.n
-        = current_object.n == 1 ? 'civilization' : 'civilizations'
+        = number_with_delimiter @current_object.n
+        = @current_object.n == 1 ? 'civilization' : 'civilizations'
   - Survey.parameter_columns.each do |parameter|
     %li
       %dl
         %dt
           = parameter_to_drake_component parameter
         %dd
-          = current_object.send("#{parameter}_rational").send("#{parameter}_label")
-
-%br
+          = @current_object.send("#{parameter}_rational").send("#{parameter}_label")
 
 %p
-  - if current_object.survey_group
-    = link_to "See how others, in your class, answered these questions&hellip;", [current_object.survey_group, :surveys]
+  - if @current_object.survey_group
+    = link_to "See how others in your class answered these questions&hellip;", [@current_object.survey_group, :surveys]
   -else  
     = link_to "See how others answered these questions&hellip;", surveys_path
 
-- if @survey.id == session[:survey_id]
+- if @current_object.id == session[:survey_id]
   %p.tweet-result
-    %a{:href => "http://twitter.com/home?status=I+found+#{current_object.n}+alien+civilizations+at+http://quest-for-life.org/surveys/#{@survey.slug}", :target => "_new"}
+    %a{:href => "http://twitter.com/home?status=I+found+#{@current_object.n}+alien+civilizations+at+http://quest-for-life.org/surveys/#{@current_object.slug}", :target => "_new"}
       = image_tag 'twitter_logo.png', :alt => '', :size => '80x18' 
       %strong Help spread the word.
       Post your result to Twitter.

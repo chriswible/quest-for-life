@@ -183,5 +183,4 @@ $(document).ready(function() {
 			name: 'Count'
 		}]
 	});
-	
 });

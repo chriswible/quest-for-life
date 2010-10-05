@@ -6,6 +6,11 @@
   send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
   
 - form_for Survey.new do |f|
+  = submit_tag 'Begin your quest!'
+  %div#current-average
+    %h2 Current Estimate
+    %p.estimate= number_with_delimiter(Survey.current_average)
+    %p.centered Intelligent Civilizations
   %p.start-survey-prompt 
     %a{ :href => '#' }
       = image_tag 'pioneer_plaque_small.jpg', :title => "Is anybody out there to find Pioneer's gold plaque?", :id => 'plaque'

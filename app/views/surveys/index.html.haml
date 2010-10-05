@@ -6,19 +6,16 @@
   send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
   
 - title 'Results'
-- summarize_parameter = params[:p] || 'n'
-
+- summarize_parameter = @parameter
 %p
-  - if parent?
-    = parent_object.group_name
+  - if !@current_object.nil? && @current_object.survey_group
+    = @current_object.survey_group.group_name
     /= link_to parent_object.group_name, parent_object
-
 .vertical-tabs
   %ol.tabs
-    - for parameter in ([:n] + Survey.parameter_columns)
+    - for parameter in (Survey.parameter_columns + [:n])
       %li
-        %a{ :class => (parameter.to_s == summarize_parameter) ? 'yah' : '', :href => url_for(:p => parameter) }
+        %a{ :class => (parameter.to_s == summarize_parameter) ? 'yah ' + parameter.to_s : parameter.to_s, :href => url_for(:p => parameter) }
           = parameter_to_drake_component parameter
-
-  = render :partial => 'parameter_results'
-
+  %div#page-body
+    = render :partial => 'parameter_results'

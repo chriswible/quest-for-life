@@ -10,7 +10,7 @@
 %p
   Let's get started!
 
-- semantic_form_for [parent_object, current_object].compact do |form|
+- semantic_form_for [@current_object.survey_group, @current_object].compact do |form|
       
   - form.buttons do
     = form.commit_button 'Start the Drake Equation'
